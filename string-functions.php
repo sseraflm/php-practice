@@ -37,3 +37,22 @@ $emailLength = mb_strlen($fixEmail);
 $passLength = mb_strlen($fixPass);
 
 echo "The length of the email is: {$emailLength} and the length of the password is: {$passLength}";
+
+
+$toArray = "php,javascript,sql";
+
+$finArray = explode(",", $toArray);
+
+var_dump($finArray);
+
+$truth = "Ado is the best singer.";
+$betterTruth = str_replace("best", "greatest", $truth);
+
+echo $betterTruth;
+
+$id = 22;
+$price = 222;
+
+$result = sprintf("Item number #%04d with the price of $%.2f dollars.", $id, $price);
+
+echo $result;
