@@ -86,3 +86,17 @@ Performs a three-way comparison which returns:
 `date()` formats a timestamp as a string using format characters.
 
 `strtotime` converts a date string into a timestamp, which `date()` can then reformat.
+
+### String Functions
+
+`strlen()` returns the length of a string.
+
+`strtolower()`/ `strtoupper()` convert a string's case.
+
+`trim()` removes whitespace from both ends of a string.
+
+`explode()` splits a string into an array u sing a seperarator, while `implode()` does the reverse.
+
+`str_replace()` substitues all occurrences of a substring with another.
+
+`sprintf()` formats a string using placeholders.
