@@ -193,8 +193,94 @@ Always check the result with `=== false` because valid values like `0` are falsy
 
 `FILTER_VALIDATE_INT` takes range limits in a nested options array.
 
-```phpilter_var($email, FILTER_VALIDATE_EMAIL)
+```php
 filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 10]]);
 ```
 
 It will reject decimals like `5.5` and leading zeros like `007` it also trims the surrounding whitespace.
+
+### Sessions
+
+`session_start()` loads the visitor's session, and `$_SESSION` holds the data. It has to be called before any output, and on every page that uses the session.
+
+example: 
+
+```php
+session_start();
+$_SESSION['counter'] = ($_SESSION['counter'] ?? 0) + 1;
+```
+
+The data stays on the server. The browser only holds a random ID in the `PHPSESSID` cookie, which links the visitor to their session. The visitor cannot edit what is stored in it.
+
+To destroy a session use empty `$_SESSION` and call `session_destroy()`.
+
+### Cookies
+
+`setcookie()` stores a value in the browser. It must be called before any output, and `expires` is a Unix timestamp.
+
+example: 
+
+```php
+setcookie('theme', 'dark', time() + 86400);
+```
+
+A new cookie shows up in `$_COOKIE` on the next request, not in the same script.
+
+To delete a cookie, set its expiry in the past with the same name and path.
+
+The options-array form allows `httponly` and `samesite`. `Lax` stops the cookie being sent on cross-site POST requests, which helps against CSRF.
+
+### Sessions vs Cookies
+
+A session keeps its data on the server and the browser holds only an ID. A cookie keeps the actual value in the browser, where the visitor can edit it, so it can't be trusted for things like "is this user an admin".
+
+### Include and Require
+
+`include` gives a warning if the file is missing and the script continues. `require` stops the script with a fatal error.
+
+The `_once` versions skip a file that was already loaded, which avoids redefining functions. `require_once` is the usual choice for code files.
+
+`__DIR__` is the folder of the current file, without a trailing slash. A relative path can depend on where the script was started, but `__DIR__` doesn't.
+
+```php
+require_once __DIR__ . '/helpers.php';
+```
+
+### Files
+
+`file_put_contents()` overwrites the file by default. `FILE_APPEND` adds to the end instead.
+
+example:
+
+```php
+file_put_contents($path, 'text' . PHP_EOL, FILE_APPEND);
+```
+
+`file_get_contents()` reads the whole file. Check with `file_exists()` first.
+
+Both return `false` on failure.
+
+`fopen()` takes a mode: `r` reads, `a` appends and `w` empties the file. `fgets()` reads one line at a time and returns `false` at the end. Always `fclose()` the handle.
+
+`file()` reads a file into an array of lines.
+
+### JSON
+
+`json_encode()` turns an array into JSON, and `JSON_PRETTY_PRINT` makes it readable. `json_decode($json, true)` turns it back into an array.
+
+Broken or empty JSON gives `null`, so check the result before using it.
+
+### Password Hashing
+
+`password_hash()` creates a hash with a random salt, so hashing the same password twice gives different results. Compare passwords with `password_verify()`, never with `===`.
+
+```php
+$hash = password_hash($password, PASSWORD_DEFAULT);
+password_verify($password, $hash);
+```
+
+`PASSWORD_DEFAULT` currently uses bcrypt. Argon2id `PASSWORD_ARGON2ID` is newer and memory-hard, which makes it harder to crack on GPUs.
+
+The hash string contains the algorithm, its settings and the salt, so `password_verify()` doesn't need to be told which algorithm was used.
+
+Never store plain passwords.
